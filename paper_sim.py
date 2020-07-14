@@ -62,12 +62,25 @@ def LA_D(D, tau, T, dt):
     N = int(T / dt)
     var = D / tau
     x = np.zeros(N)
-    x[0] = np.random.laplace(0, np.sqrt(var / 2))
+    x[0] = np.random.laplace(0, np.sqrt(var / 2)) 
     D1 = - 5 * dt / (2 * tau) * np.sqrt(D / (2 * tau))
     D2 = np.sqrt(5 * D * dt / (2 * tau ** 2)) * np.random.normal(0, 1, N)
     for i in range(1, N):
         x[i] = x[i-1] + np.sign(x[i-1]) * D1 + D2[i]
     return x   
+
+
+## OU noise with noise intenity
+def OU_D(D, tau, T, dt):
+    N = int(T / dt)
+    var = D / tau
+    x = np.zeros(N)
+    x[0] = np.random.normal(0, np.sqrt(var))
+    D1 = - dt / tau       
+    D2 = np.sqrt(2 * var * tau * dt) / tau * np.random.normal(0,1, size = N) 
+    for i in range(1, N):                 ##integrating
+        x[i] = x[i-1] + x[i - 1] * D1 + D2[i - 1]
+    return x
 
 ## OU noise with variance
 def OU_var(var, tau, T, dt):
@@ -80,18 +93,28 @@ def OU_var(var, tau, T, dt):
         x[i] = x[i-1] + x[i-1] * D1 + D2[i-1]
     return x
 
-## OU noise with noise intenity
-def OU_D(D, tau, T, dt):
+##Correlation Functon in var space
+def Corr_LA_var(tau, var, T, dt):
+    points = []
     N = int(T / dt)
-    var = D / tau
-    x = np.zeros(N)
-    x[0] = np.random.normal(0, np.sqrt(var))
-    D1 = - dt / tau
-    D2 = np.sqrt(2 * var * tau * dt) / tau * np.random.normal(0,1, size = N)
-    for i in range(1, N):
-        x[i] = x[i-1] + x[i - 1] * D1 + D2[i - 1]
-    return x
+    process = LA_var(tau, var, N, dt)  ##Trajectory
+    ## power specturm:
+    psd = np.fft.fft(process) * np.conj(np.fft.fft(process)) / N  
+    C = np.fft.ifft(psd).real - np.mean(process) ** 2 ##corr iFFT
+    points.append(choose_points(t,C)) 
+    return points
 
+##Correlation Functon in Noise intensity 
+def Corr_LA_var(tau, D, T, dt):
+    points = []
+    N = int(T / dt)
+    t = np.arange(0, T, dt)
+    process = LA_D(tau, D, N, dt)  ##Trajectory
+    ## power specturm:
+    psd = np.fft.fft(process) * np.conj(np.fft.fft(process)) / N  
+    C = np.fft.ifft(psd).real - np.mean(process) ** 2 ##corr iFFT
+    points.append(choose_points(t,C)) 
+    return points
 
 ## escpae rate with Laplace colored noise 
 def escD_step (tau, D, N_sample, T, dt):
