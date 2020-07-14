@@ -76,8 +76,8 @@ def OU_D(D, tau, T, dt):
     var = D / tau
     x = np.zeros(N)
     x[0] = np.random.normal(0, np.sqrt(var))
-    D1 = - dt / tau       
-    D2 = np.sqrt(2 * var * tau * dt) / tau * np.random.normal(0,1, size = N) 
+    D1 = - dt / tau       ##first term of the SDE
+    D2 = np.sqrt(2 * var * tau * dt) / tau * np.random.normal(0,1, size = N) #2nd term with WN
     for i in range(1, N):                 ##integrating
         x[i] = x[i-1] + x[i - 1] * D1 + D2[i - 1]
     return x
@@ -87,8 +87,8 @@ def OU_var(var, tau, T, dt):
     N = int(T / dt)
     x = np.zeros(N)
     x[0] = np.random.normal(0, np.sqrt(var))
-    D1 = - dt / tau
-    D2 =  (np.sqrt(2 * var * tau * dt) / tau) * np.random.normal(0,1, N)
+    D1 = - dt / tau  ##first term of the SDE
+    D2 =  (np.sqrt(2 * var * tau * dt) / tau) * np.random.normal(0,1, N) #2nd term with WN
     for i in range(1, N):
         x[i] = x[i-1] + x[i-1] * D1 + D2[i-1]
     return x
