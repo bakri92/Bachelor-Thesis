@@ -45,17 +45,6 @@ def w_laplace (D, N_sample, T, dt):
         count2 = 0 
     return  count_tot
 
-## Laplace noise with vairance  
-def LA_var(var, tau, T, dt):
-    N = int(T / dt)
-    std = np.sqrt(var)
-    x = np.zeros(N)
-    x[0] = np.random.laplace(0, np.sqrt(var / 2))
-    D1 = - 5 * std * dt / (2 * np.sqrt(2))  ##first term of the SDE
-    D2 = np.sqrt(5 * var * dt / (2 * tau)) * np.random.normal(0, 1, N) #2nd term with WN
-    for i in range(1, N):
-        x[i] = x[i-1] + np.sign(x[i-1]) * D1 + D2[i]
-    return x
 
 ## Laplace noise with noise intensity 
 def LA_D(D, tau, T, dt):
@@ -68,6 +57,29 @@ def LA_D(D, tau, T, dt):
     for i in range(1, N):
         x[i] = x[i-1] + np.sign(x[i-1]) * D1 + D2[i]
     return x   
+
+## Laplace noise with vairance  
+def LA_var(var, tau, T, dt):
+    N = int(T / dt)
+    std = np.sqrt(var)
+    x = np.zeros(N)
+    x[0] = np.random.laplace(0, np.sqrt(var / 2))
+    D1 = - 5 * std * dt / (2 * np.sqrt(2))  ##first term of the SDE
+    D2 = np.sqrt(5 * var * dt / (2 * tau)) * np.random.normal(0, 1, N) #2nd term with WN
+    for i in range(1, N):
+        x[i] = x[i-1] + np.sign(x[i-1]) * D1 + D2[i]
+    return x
+
+## OU noise with variance
+def OU_var(var, tau, T, dt):
+    N = int(T / dt)
+    x = np.zeros(N)
+    x[0] = np.random.normal(0, np.sqrt(var))
+    D1 = - dt / tau  ##first term of the SDE
+    D2 =  (np.sqrt(2 * var * tau * dt) / tau) * np.random.normal(0,1, N) #2nd term with WN
+    for i in range(1, N):
+        x[i] = x[i-1] + x[i-1] * D1 + D2[i-1]
+    return x
 
 
 ## OU noise with noise intenity
@@ -82,16 +94,7 @@ def OU_D(D, tau, T, dt):
         x[i] = x[i-1] + x[i - 1] * D1 + D2[i - 1]
     return x
 
-## OU noise with variance
-def OU_var(var, tau, T, dt):
-    N = int(T / dt)
-    x = np.zeros(N)
-    x[0] = np.random.normal(0, np.sqrt(var))
-    D1 = - dt / tau  ##first term of the SDE
-    D2 =  (np.sqrt(2 * var * tau * dt) / tau) * np.random.normal(0,1, N) #2nd term with WN
-    for i in range(1, N):
-        x[i] = x[i-1] + x[i-1] * D1 + D2[i-1]
-    return x
+
 
 ##Correlation Functon in var space
 def Corr_LA_var(tau, var, T, dt):
