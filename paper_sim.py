@@ -105,7 +105,7 @@ def Corr_LA_var(tau, var, T, dt):
     return points
 
 ##Correlation Functon in Noise intensity 
-def Corr_LA_var(tau, D, T, dt):
+def Corr_LA_D(tau, D, T, dt):
     points = []
     N = int(T / dt)
     t = np.arange(0, T, dt)
