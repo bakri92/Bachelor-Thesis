@@ -64,7 +64,7 @@ def LA_var(var, tau, T, dt):
     std = np.sqrt(var)
     x = np.zeros(N)
     x[0] = np.random.laplace(0, np.sqrt(var / 2))
-    D1 = - 5 * std * dt / (2 * np.sqrt(2))  ##first term of the SDE
+    D1 = - 5 * std * dt / (2 * np.sqrt(2) * tau)  ##first term of the SDE
     D2 = np.sqrt(5 * var * dt / (2 * tau)) * np.random.normal(0, 1, N) #2nd term with WN
     for i in range(1, N):
         x[i] = x[i-1] + np.sign(x[i-1]) * D1 + D2[i]
